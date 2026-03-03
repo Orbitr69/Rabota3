@@ -1,0 +1,46 @@
+#include "Student.h"
+#include <cstring>
+using namespace std;
+
+STUDENT::STUDENT() {}
+
+STUDENT::STUDENT(char* name, int group, int* marks) {
+    strcpy_s(this->fullName, 50, name);
+    this->groupNumber = group;
+    for (int i = 0; i < 5; i++) {
+        this->grades[i] = marks[i];
+    }
+}
+
+STUDENT::STUDENT(const char* name, int group, int* marks) {
+    strcpy_s(this->fullName, 50, name);
+    this->groupNumber = group;
+    for (int i = 0; i < 5; i++) {
+        this->grades[i] = marks[i];
+    }
+}
+
+STUDENT::STUDENT(const STUDENT& other) {
+    strcpy_s(this->fullName, 50, other.fullName);
+    this->groupNumber = other.groupNumber;
+    for (int i = 0; i < 5; i++) {
+        this->grades[i] = other.grades[i];
+    }
+}
+
+STUDENT::~STUDENT() {}
+
+bool STUDENT::operator>(const STUDENT& b) {
+    return this->groupNumber > b.groupNumber;
+}
+
+STUDENT& STUDENT::operator=(const STUDENT& b) {
+    if (this != &b) {
+        strcpy_s(this->fullName, 50, b.fullName);
+        this->groupNumber = b.groupNumber;
+        for (int i = 0; i < 5; i++) {
+            this->grades[i] = b.grades[i];
+        }
+    }
+    return *this;
+}
