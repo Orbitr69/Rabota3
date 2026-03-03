@@ -1,0 +1,41 @@
+#ifndef STUDENT_H
+#define STUDENT_H
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class STUDENT
+{
+public:
+    char fullName[50];
+    int groupNumber;
+    int grades[5];
+    
+    STUDENT();
+    STUDENT(char* name, int group, int* marks);
+    STUDENT(const char* name, int group, int* marks);
+    STUDENT(const STUDENT& other);
+    ~STUDENT();
+    
+    bool operator >(const STUDENT& b);
+    STUDENT& operator=(const STUDENT& b);
+    
+    friend ostream& operator<<(ostream& os, const STUDENT& m) {
+        os << m.fullName << " " << m.groupNumber;
+        for (int i = 0; i < 5; i++) {
+            os << " " << m.grades[i];
+        }
+        return os;
+    }
+    
+    friend istream& operator>>(istream& is, STUDENT& m) {
+        is >> m.fullName >> m.groupNumber;
+        for (int i = 0; i < 5; i++) {
+            is >> m.grades[i];
+        }
+        return is;
+    }
+};
+
+#endif
