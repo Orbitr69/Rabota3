@@ -1,0 +1,76 @@
+#include "Student.h"
+#include <iostream>
+
+// Конструктор по умолчанию
+STUDENT::STUDENT() {
+    fullName[0] = '\0';
+    groupNumber = 0;
+    for (int i = 0; i < 5; ++i) {
+        grades[i] = 0;
+    }
+    // std::cout << "Сработал конструктор по умолчанию\n";
+}
+
+// Конструктор с параметрами
+STUDENT::STUDENT(const char* name, int group, const int* marks) {
+    strcpy_s(fullName, name);
+    groupNumber = group;
+    for (int i = 0; i < 5; ++i) {
+        grades[i] = marks[i];
+    }
+    // std::cout << "Сработал конструктор с параметрами\n";
+}
+
+// Конструктор копирования
+STUDENT::STUDENT(const STUDENT& other) {
+    strcpy_s(fullName, other.fullName);
+    groupNumber = other.groupNumber;
+    for (int i = 0; i < 5; ++i) {
+        grades[i] = other.grades[i];
+    }
+    // std::cout << "Сработал конструктор копирования\n";
+}
+
+// Деструктор
+STUDENT::~STUDENT() {
+    // std::cout << "Сработал деструктор для " << fullName << "\n";
+}
+
+// Оператор присваивания
+STUDENT& STUDENT::operator=(const STUDENT& other) {
+    if (this != &other) { // Защита от самоприсваивания
+        strcpy_s(this->fullName, other.fullName);
+        this->groupNumber = other.groupNumber;
+        for (int i = 0; i < 5; ++i) {
+            this->grades[i] = other.grades[i];
+        }
+    }
+    return *this;
+}
+
+// Перегрузка оператора > для сравнения студентов по номеру группы
+bool STUDENT::operator>(const STUDENT& other) const {
+    return this->groupNumber > other.groupNumber;
+}
+
+// Перегрузка оператора вывода в поток (для вывода на экран и в файл)
+std::ostream& operator<<(std::ostream& os, const STUDENT& s) {
+    os << s.fullName << " " << s.groupNumber;
+    for (int i = 0; i < 5; ++i) {
+        os << " " << s.grades[i];
+    }
+    return os;
+}
+
+// Перегрузка оператора ввода из потока (для ввода с клавиатуры и из файла)
+std::istream& operator>>(std::istream& is, STUDENT& s) {
+    std::cout << "Введите фамилию и инициалы: ";
+    is >> s.fullName;
+    std::cout << "Введите номер группы: ";
+    is >> s.groupNumber;
+    std::cout << "Введите 5 оценок через пробел: ";
+    for (int i = 0; i < 5; ++i) {
+        is >> s.grades[i];
+    }
+    return is;
+}
