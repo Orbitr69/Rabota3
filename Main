@@ -1,0 +1,86 @@
+#include <iostream>
+#include <fstream>
+#include "Student.h"
+using namespace std;
+
+double averageGrade(const STUDENT& s) {
+    double sum = 0;
+    for (int i = 0; i < 5; i++) sum += s.grades[i];
+    return sum / 5.0;
+}
+
+int main()
+{
+    // Открываем файл для чтения
+    ifstream inFile("students.txt");
+    if (!inFile) {
+        cout << "Ошибка открытия файла!" << endl;
+        return 1;
+    }
+    
+    // Читаем студентов (как в вашем примере с Train)
+    STUDENT students[10];
+    int n = 0;
+    while (n < 10 && inFile >> students[n]) {
+        n++;
+    }
+    inFile.close();
+    
+    // Выводим прочитанных студентов
+    cout << "=== Прочитано " << n << " студентов ===\n";
+    for (int i = 0; i < n; i++) {
+        cout << students[i] << "\n";
+    }
+    
+    // Сортируем по группе
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (students[j] > students[j+1]) {
+                STUDENT temp = students[j];
+                students[j] = students[j+1];
+                students[j+1] = temp;
+            }
+        }
+    }
+    
+    cout << "\n=== После сортировки ===\n";
+    for (int i = 0; i < n; i++) {
+        cout << students[i] << "\n";
+    }
+    
+    // Запись в бинарный файл
+    ofstream outBin("students.bin", ios::binary);
+    outBin.write((char*)students, n * sizeof(STUDENT));
+    outBin.close();
+    
+    // Чтение из бинарного файла (как в вашем примере)
+    ifstream inBin("students.bin", ios::binary);
+    inBin.seekg(0, ios::end);
+    int fileSize = inBin.tellg();
+    int recordCount = fileSize / sizeof(STUDENT);
+    
+    STUDENT* readStudents = new STUDENT[recordCount];
+    inBin.seekg(0, ios::beg);
+    inBin.read((char*)readStudents, recordCount * sizeof(STUDENT));
+    inBin.close();
+    
+    cout << "\n=== Прочитано из бинарного файла: " << recordCount << " записей ===\n";
+    
+    // Вывод студентов со средним баллом > 4.0
+    cout << "\n=== Студенты со средним баллом > 4.0 ===\n";
+    bool found = false;
+    for (int i = 0; i < recordCount; i++) {
+        if (averageGrade(readStudents[i]) > 4.0) {
+            cout << readStudents[i].fullName << " (группа " 
+                 << readStudents[i].groupNumber << ")" << endl;
+            found = true;
+        }
+    }
+    
+    if (!found) {
+        cout << "Таких студентов нет\n";
+    }
+    
+    delete[] readStudents;
+    return 0;
+}
