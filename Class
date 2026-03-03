@@ -1,0 +1,35 @@
+#ifndef STUDENT_H
+#define STUDENT_H
+
+#include <iostream>
+#include <cstring> // для strcpy_s
+
+class STUDENT
+{
+public:
+    // Данные класса
+    char fullName[50];   // Фамилия и инициалы
+    int groupNumber;      // Номер группы
+    int grades[5];        // Успеваемость (5 оценок)
+
+    // Конструкторы
+    STUDENT();
+    STUDENT(const char* name, int group, const int* marks);
+    // Конструктор копирования (важно для массивов)
+    STUDENT(const STUDENT& other);
+
+    // Деструктор
+    ~STUDENT();
+
+    // Перегрузка оператора > для сортировки по номеру группы
+    bool operator>(const STUDENT& other) const;
+
+    // Дружественные функции для перегрузки ввода/вывода
+    friend std::ostream& operator<<(std::ostream& os, const STUDENT& s);
+    friend std::istream& operator>>(std::istream& is, STUDENT& s);
+
+    // Оператор присваивания
+    STUDENT& operator=(const STUDENT& other);
+};
+
+#endif
