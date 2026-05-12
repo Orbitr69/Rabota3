@@ -1,7 +1,82 @@
 #include <iostream>
 #include <fstream>
+#include <clocale>
 #include "Student.h"
 using namespace std;
+
+// 1. Insertion sort
+void insertionSort(STUDENT arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        STUDENT key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j].groupNumber > key.groupNumber) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// 2. Selection sort
+void selectionSort(STUDENT arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j].groupNumber < arr[minIdx].groupNumber)
+                minIdx = j;
+        }
+        if (minIdx != i) {
+            STUDENT temp = arr[i];
+            arr[i] = arr[minIdx];
+            arr[minIdx] = temp;
+        }
+    }
+}
+
+// 3. Bubble sort
+void bubbleSort(STUDENT arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j].groupNumber > arr[j + 1].groupNumber) {
+                STUDENT temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
+// 4. Gnome sort
+void gnomeSort(STUDENT arr[], int n) {
+    int i = 0;
+    while (i < n) {
+        if (i == 0 || arr[i - 1].groupNumber <= arr[i].groupNumber)
+            i++;
+        else {
+            STUDENT temp = arr[i];
+            arr[i] = arr[i - 1];
+            arr[i - 1] = temp;
+            i--;
+        }
+    }
+}
+
+// 5. Shell sort
+void shellSort(STUDENT arr[], int n) {
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            STUDENT temp = arr[i];
+            int j;
+            for (j = i; j >= gap && arr[j - gap].groupNumber > temp.groupNumber; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
 
 double averageGrade(const STUDENT& s) {
     double sum = 0;
@@ -9,78 +84,94 @@ double averageGrade(const STUDENT& s) {
     return sum / 5.0;
 }
 
-int main()
-{
-    // Открываем файл для чтения
-    ifstream inFile("students.txt");
-    if (!inFile) {
-        cout << "Ошибка открытия файла!" << endl;
+int main() {
+    const int N = 10;
+    STUDENT students[N];
+
+    // 1. Чтение из текстового файла
+    ifstream fin("students.txt");
+    if (!fin) {
+        cout << "Файл students.txt не найден!\n";
         return 1;
     }
-    
-    // Читаем студентов (как в вашем примере с Train)
-    STUDENT students[10];
-    int n = 0;
-    while (n < 10 && inFile >> students[n]) {
-        n++;
-    }
-    inFile.close();
-    
-    // Выводим прочитанных студентов
-    cout << "=== Прочитано " << n << " студентов ===\n";
-    for (int i = 0; i < n; i++) {
-        cout << students[i] << "\n";
-    }
-    
-    // Сортируем по группе
-    for (int i = 0; i < n-1; i++) {
-        for (int j = 0; j < n-i-1; j++) {
-            if (students[j] > students[j+1]) {
-                STUDENT temp = students[j];
-                students[j] = students[j+1];
-                students[j+1] = temp;
-            }
-        }
-    }
-    
-    cout << "\n=== После сортировки ===\n";
-    for (int i = 0; i < n; i++) {
-        cout << students[i] << "\n";
-    }
-    
-    // Запись в бинарный файл
-    ofstream outBin("students.bin", ios::binary);
-    outBin.write((char*)students, n * sizeof(STUDENT));
-    outBin.close();
-    
-    // Чтение из бинарного файла (как в вашем примере)
-    ifstream inBin("students.bin", ios::binary);
-    inBin.seekg(0, ios::end);
-    int fileSize = inBin.tellg();
-    int recordCount = fileSize / sizeof(STUDENT);
-    
-    STUDENT* readStudents = new STUDENT[recordCount];
-    inBin.seekg(0, ios::beg);
-    inBin.read((char*)readStudents, recordCount * sizeof(STUDENT));
-    inBin.close();
-    
-    cout << "\n=== Прочитано из бинарного файла: " << recordCount << " записей ===\n";
-    
-    // Вывод студентов со средним баллом > 4.0
-    cout << "\n=== Студенты со средним баллом > 4.0 ===\n";
+
+    for (int i = 0; i < N && fin >> students[i]; i++);
+    fin.close();
+
+    // 2. Вывод исходного массива
+    cout << "Исходные студенты:\n";
+    for (int i = 0; i < N; i++) cout << students[i] << endl;
+    cout << "\n=====================================\n\n";
+
+    // 3. Копия для сортировок
+    STUDENT temp[N];
+
+    // 1. Insertion sort
+    memcpy(temp, students, sizeof(students));
+    insertionSort(temp, N);
+    cout << "1. После Insertion Sort:\n";
+    for (int i = 0; i < N; i++) cout << temp[i] << endl;
+    cout << "\n";
+
+    // 2. Selection sort
+    memcpy(temp, students, sizeof(students));
+    selectionSort(temp, N);
+    cout << "2. После Selection Sort:\n";
+    for (int i = 0; i < N; i++) cout << temp[i] << endl;
+    cout << "\n";
+
+    // 3. Bubble sort
+    memcpy(temp, students, sizeof(students));
+    bubbleSort(temp, N);
+    cout << "3. После Bubble Sort:\n";
+    for (int i = 0; i < N; i++) cout << temp[i] << endl;
+    cout << "\n";
+
+    // 4. Gnome sort
+    memcpy(temp, students, sizeof(students));
+    gnomeSort(temp, N);
+    cout << "4. После Gnome Sort:\n";
+    for (int i = 0; i < N; i++) cout << temp[i] << endl;
+    cout << "\n";
+
+    // 5. Shell sort
+    memcpy(temp, students, sizeof(students));
+    shellSort(temp, N);
+    cout << "5. После Shell Sort:\n";
+    for (int i = 0; i < N; i++) cout << temp[i] << endl;
+    cout << "\n";
+
+    // 4. Основная сортировка (например, insertion)
+    STUDENT sorted[N];
+    memcpy(sorted, students, sizeof(students));
+    insertionSort(sorted, N);
+
+    // 5. Запись в двоичный файл
+    ofstream fout("students.bin", ios::binary);
+    fout.write((char*)sorted, N * sizeof(STUDENT));
+    fout.close();
+    cout << "Отсортированные студенты записаны в students.bin\n\n";
+
+    // 6. Чтение из двоичного файла
+    ifstream finBin("students.bin", ios::binary);
+    STUDENT binStudents[N];
+    finBin.read((char*)binStudents, N * sizeof(STUDENT));
+    int binCount = finBin.gcount() / sizeof(STUDENT);
+    finBin.close();
+
+    // 7. Вывод студентов со средним > 4.0
+    cout << "Студенты со средним баллом > 4.0:\n";
     bool found = false;
-    for (int i = 0; i < recordCount; i++) {
-        if (averageGrade(readStudents[i]) > 4.0) {
-            cout << readStudents[i].fullName << " (группа " 
-                 << readStudents[i].groupNumber << ")" << endl;
+    for (int i = 0; i < binCount; i++) {
+        int sum = 0;
+        for (int j = 0; j < 5; j++) sum += binStudents[i].grades[j];
+        double avg = sum / 5.0;
+        if (avg > 4.0) {
+            cout << binStudents[i].fullName << ", группа " << binStudents[i].groupNumber << endl;
             found = true;
         }
     }
-    
-    if (!found) {
-        cout << "Таких студентов нет\n";
-    }
-    
-    delete[] readStudents;
+    if (!found) cout << "Таких студентов нет.\n";
+
     return 0;
 }
