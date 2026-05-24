@@ -1,0 +1,10 @@
+Ivanov 101 5 4 5 4 5
+Petrov 102 3 4 3 4 3
+Sidorov 101 4 4 4 4 4
+Kozlov 103 5 5 5 5 5
+Smirnov 102 4 3 4 3 4
+Vasiliev 101 5 5 5 5 4
+Fedorov 103 4 4 3 4 4
+Morozov 102 3 3 3 3 3
+Volkov 101 5 5 4 5 5
+Zaitsev 103 4 5 4 5 4
